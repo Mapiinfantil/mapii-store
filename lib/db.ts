@@ -1,8 +1,5 @@
 import { createClient, type Client } from "@libsql/client";
 
-// En local usa un archivo SQLite (./dev.db). En producción, se configura
-// TURSO_DATABASE_URL + TURSO_AUTH_TOKEN apuntando a una base Turso (ver
-// README) y el mismo código sigue funcionando sin cambios.
 const globalForDb = globalThis as unknown as { dbClient?: Client; dbListo?: Promise<void> };
 
 function crearCliente(): Client {
@@ -15,10 +12,20 @@ function crearCliente(): Client {
   return createClient({ url: process.env.DATABASE_URL ?? "file:./dev.db" });
 }
 
-export const db = globalForDb.dbClient ?? crearCliente();
-if (process.env.NODE_ENV !== "production") {
-  globalForDb.dbClient = db;
+function obtenerCliente(): Client {
+  if (!globalForDb.dbClient) {
+    globalForDb.dbClient = crearCliente();
+  }
+  return globalForDb.dbClient;
 }
+
+export const db: Client = new Proxy({} as Client, {
+  get(_target, prop, receiver) {
+    const cliente = obtenerCliente();
+    const valor = Reflect.get(cliente, prop, receiver);
+    return typeof valor === "function" ? valor.bind(cliente) : valor;
+  },
+});
 
 const ESQUEMA = `
 CREATE TABLE IF NOT EXISTS productos (
@@ -76,7 +83,6 @@ async function migrar() {
   }
 }
 
-// Se asegura de correr la migración una sola vez por instancia del servidor.
 export function baseDeDatosLista(): Promise<void> {
   if (!globalForDb.dbListo) {
     globalForDb.dbListo = migrar();

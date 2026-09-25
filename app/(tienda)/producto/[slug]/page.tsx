@@ -4,6 +4,8 @@ import { registrarVisita } from "@/lib/visitas";
 import { formatearPrecio, ETIQUETA_CATEGORIA } from "@/lib/formato";
 import { AgregarAlCarrito } from "./AgregarAlCarrito";
 
+export const dynamic = "force-dynamic";
+
 export default async function ProductoPage({
   params,
 }: {
