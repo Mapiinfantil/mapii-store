@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { useCarrito } from "@/components/CartProvider";
 
 export function Nav() {
@@ -10,14 +9,8 @@ export function Nav() {
   return (
     <nav className="flex items-center justify-between py-7">
       <Link href="/" className="block">
-        <Image
-          src="/logo.png"
-          alt="Mapii Infantil"
-          width={932}
-          height={376}
-          priority
-          className="h-10 w-auto"
-        />
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/logo.png" alt="Mapii Infantil" className="h-10 w-auto" />
       </Link>
       <ul className="hidden gap-9 text-[15px] text-ink md:flex">
         <li>
