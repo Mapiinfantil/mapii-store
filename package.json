@@ -5,9 +5,10 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
+    "start": "HOSTNAME=0.0.0.0 node .next/standalone/server.js",
     "lint": "eslint",
-    "seed": "tsx scripts/seed.ts"
+    "seed": "tsx scripts/seed.ts",
+    "postbuild": "cp -r public .next/standalone/public && cp -r .next/static .next/standalone/.next/static"
   },
   "dependencies": {
     "@libsql/client": "^0.18.0",
