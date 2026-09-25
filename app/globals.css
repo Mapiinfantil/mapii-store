@@ -9,6 +9,9 @@
   --color-terracotta: #bd7a54;
   --color-terracotta-deep: #9b5f3e;
   --color-line: rgba(51, 50, 42, 0.14);
+  --font-fraunces: "Fraunces", serif;
+  --font-work-sans: "Work Sans", sans-serif;
+  --font-caveat: "Caveat", cursive;
 }
 
 @theme inline {

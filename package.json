@@ -8,7 +8,7 @@
     "start": "HOSTNAME=0.0.0.0 node .next/standalone/server.js",
     "lint": "eslint",
     "seed": "tsx scripts/seed.ts",
-    "postbuild": "pwd && ls -la && cp -r public .next/standalone/public && cp -r .next/static .next/standalone/.next/static"
+    "postbuild": "cp -r public .next/standalone/public && cp -r .next/static .next/standalone/.next/static"
   },
   "dependencies": {
     "@libsql/client": "^0.18.0",
