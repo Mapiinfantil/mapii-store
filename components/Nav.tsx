@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useCarrito } from "@/components/CartProvider";
 
 export function Nav() {
@@ -8,11 +9,15 @@ export function Nav() {
 
   return (
     <nav className="flex items-center justify-between py-7">
-      <Link href="/" className="font-serif text-2xl text-olive-deep">
-        mapii<span className="text-terracotta">ii</span>{" "}
-        <span className="font-script text-base text-terracotta align-middle">
-          infantil
-        </span>
+      <Link href="/" className="block">
+        <Image
+          src="/logo.png"
+          alt="Mapii Infantil"
+          width={932}
+          height={376}
+          priority
+          className="h-10 w-auto"
+        />
       </Link>
       <ul className="hidden gap-9 text-[15px] text-ink md:flex">
         <li>
