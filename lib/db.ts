@@ -1,5 +1,8 @@
 import { createClient, type Client } from "@libsql/client";
 
+// En local usa un archivo SQLite (./dev.db). En producción, se configura
+// TURSO_DATABASE_URL + TURSO_AUTH_TOKEN apuntando a una base Turso (ver
+// README) y el mismo código sigue funcionando sin cambios.
 const globalForDb = globalThis as unknown as { dbClient?: Client; dbListo?: Promise<void> };
 
 function crearCliente(): Client {
@@ -12,6 +15,12 @@ function crearCliente(): Client {
   return createClient({ url: process.env.DATABASE_URL ?? "file:./dev.db" });
 }
 
+// OJO: el cliente NO se crea acá arriba (a nivel de módulo), a propósito.
+// Si se creara apenas se importa este archivo, Next.js intentaría abrir la
+// base de datos incluso al analizar las rutas durante el build — momento en
+// el que, en Railway, el disco persistente (/data) todavía no existe. Por
+// eso el cliente se crea recién la primera vez que alguien hace una consulta
+// de verdad (ver "db" más abajo).
 function obtenerCliente(): Client {
   if (!globalForDb.dbClient) {
     globalForDb.dbClient = crearCliente();
@@ -19,6 +28,8 @@ function obtenerCliente(): Client {
   return globalForDb.dbClient;
 }
 
+// Se usa exactamente igual que el cliente real (db.execute(...), etc.), pero
+// no abre la conexión hasta el primer uso.
 export const db: Client = new Proxy({} as Client, {
   get(_target, prop, receiver) {
     const cliente = obtenerCliente();
@@ -75,6 +86,14 @@ CREATE TABLE IF NOT EXISTS visitas (
   ruta TEXT NOT NULL,
   creado_en TEXT NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS admin_usuarios (
+  id TEXT PRIMARY KEY,
+  nombre TEXT NOT NULL,
+  email TEXT NOT NULL UNIQUE,
+  password_hash TEXT NOT NULL,
+  creado_en TEXT NOT NULL
+);
 `;
 
 async function migrar() {
@@ -83,6 +102,7 @@ async function migrar() {
   }
 }
 
+// Se asegura de correr la migración una sola vez por instancia del servidor.
 export function baseDeDatosLista(): Promise<void> {
   if (!globalForDb.dbListo) {
     globalForDb.dbListo = migrar();

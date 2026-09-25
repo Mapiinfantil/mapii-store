@@ -4,6 +4,12 @@ import { cookies } from "next/headers";
 const COOKIE_NAME = "mapii_admin_session";
 const SESSION_DURATION_SECONDS = 60 * 60 * 24 * 7; // 7 días
 
+export type SesionAdmin = {
+  id: string;
+  nombre: string;
+  email: string;
+};
+
 function getSecret() {
   const secret = process.env.SESSION_SECRET;
   if (!secret) {
@@ -12,8 +18,12 @@ function getSecret() {
   return new TextEncoder().encode(secret);
 }
 
-export async function crearSesionAdmin() {
-  const token = await new SignJWT({ rol: "admin" })
+export async function crearSesionAdmin(usuario: SesionAdmin) {
+  const token = await new SignJWT({
+    id: usuario.id,
+    nombre: usuario.nombre,
+    email: usuario.email,
+  })
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
     .setExpirationTime(`${SESSION_DURATION_SECONDS}s`)
@@ -34,14 +44,22 @@ export async function cerrarSesionAdmin() {
   store.delete(COOKIE_NAME);
 }
 
-export async function haySesionAdminActiva(): Promise<boolean> {
+export async function obtenerSesionAdmin(): Promise<SesionAdmin | null> {
   const store = await cookies();
   const token = store.get(COOKIE_NAME)?.value;
-  if (!token) return false;
+  if (!token) return null;
   try {
-    await jwtVerify(token, getSecret());
-    return true;
+    const { payload } = await jwtVerify(token, getSecret());
+    return {
+      id: String(payload.id),
+      nombre: String(payload.nombre),
+      email: String(payload.email),
+    };
   } catch {
-    return false;
+    return null;
   }
+}
+
+export async function haySesionAdminActiva(): Promise<boolean> {
+  return (await obtenerSesionAdmin()) !== null;
 }

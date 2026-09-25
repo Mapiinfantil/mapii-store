@@ -7,6 +7,13 @@ export type EstadoPedido =
   | "CANCELADO";
 export type MedioPago = "MERCADO_PAGO" | "WEBPAY";
 
+export type AdminUsuario = {
+  id: string;
+  nombre: string;
+  email: string;
+  creadoEn: string;
+};
+
 export type Producto = {
   id: string;
   nombre: string;

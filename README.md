@@ -87,5 +87,19 @@ el checkout.
   (pendiente / pagado / enviado / entregado / cancelado). Cancelar repone
   el stock automáticamente.
 - `/admin/clientes`: listado de clientes con cuánto ha comprado cada uno.
+- `/admin/usuarios`: quiénes pueden entrar al panel. La primera vez que
+  alguien entra a `/admin/login` (cuando no existe ningún usuario todavía),
+  el formulario pide crear la primera cuenta usando `ADMIN_PASSWORD` como
+  clave maestra de una sola vez. De ahí en adelante cada persona entra con
+  su propio email y clave, y desde "Usuarios" se agregan las demás cuentas
+  (no hay aviso automático por email: la clave inicial se avisa por otro
+  medio).
 - `/admin` (resumen): visitas de los últimos 7 y 30 días, ventas pagadas,
   pedidos pendientes y productos con stock bajo (3 unidades o menos).
+
+## Vista previa al compartir el link
+
+Al mandar el link de la tienda por WhatsApp u otras redes, se muestra el
+logo de Mapii Infantil como imagen de portada (`app/opengraph-image.jpg` /
+`app/twitter-image.jpg`). Para cambiarla, reemplaza esos dos archivos por
+una imagen nueva con el mismo nombre.
